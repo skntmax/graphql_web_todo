@@ -3,20 +3,23 @@ import "./homepage.css";
 import { useQuery, gql } from "@apollo/client";
 
 function Homepage() {
+  const [c_page, set_c_page] = useState(1);
+
   const GET_TODO_LISTS = gql`
-    query ExampleQuery {
+    query getTodoListPage($pn: Int) {
       count {
         total
       }
-
-      getTodo {
+      getTodo(pn: $pn) {
         title
         discription
       }
     }
   `;
 
-  const { loading, error, data } = useQuery(GET_TODO_LISTS);
+  const { loading, error, data } = useQuery(GET_TODO_LISTS, {
+    variables: { pn: c_page },
+  });
 
   if (error) {
     return <p> error occured {error} </p>;
@@ -26,11 +29,11 @@ function Homepage() {
     return <p> loading ...</p>;
   }
 
-  if (data) {
-    return (
-      <>
-        <div className="card_container">
-          {data.getTodo.map((ele, i) => {
+  return (
+    <>
+      <div className="card_container">
+        {data &&
+          data.getTodo.map((ele, i) => {
             return (
               <div
                 class="card border-secondary mb-3 text-center"
@@ -44,13 +47,19 @@ function Homepage() {
               </div>
             );
           })}
-        </div>
+      </div>
 
-        {/* <div className="justiy-content-center">
+      <div className="d-flex justify-content-center">
+        <div className="justiy-content-center">
           <nav aria-label="Page navigation example">
             <ul class="pagination">
               <li class="page-item">
-                <a class="page-link" href="#" aria-label="Previous">
+                <a
+                  class="page-link"
+                  href="#"
+                  aria-label="Previous"
+                  onClick={() => set_c_page((prev) => prev - 1)}
+                >
                   <span aria-hidden="true">&laquo;</span>
                 </a>
               </li>
@@ -60,8 +69,14 @@ function Homepage() {
                 .map((ele, i) => {
                   return (
                     <>
-                      <li class="page-item">
-                        <a class="page-link" href="#">
+                      <li
+                        class={`page-item ${c_page == i + 1 ? "active" : ""} `}
+                      >
+                        <a
+                          class="page-link "
+                          href="#"
+                          onClick={() => set_c_page(i + 1)}
+                        >
                           {i + 1}
                         </a>
                       </li>
@@ -70,16 +85,21 @@ function Homepage() {
                 })}
 
               <li class="page-item">
-                <a class="page-link" href="#" aria-label="Next">
+                <a
+                  class="page-link"
+                  href="#"
+                  aria-label="Next"
+                  onClick={() => set_c_page((prev) => prev + 1)}
+                >
                   <span aria-hidden="true">&raquo;</span>
                 </a>
               </li>
             </ul>
           </nav>
-        </div> */}
-      </>
-    );
-  }
+        </div>
+      </div>
+    </>
+  );
 }
 
 export default Homepage;
