@@ -3,12 +3,12 @@ import "./homepage.css";
 import { useQuery, gql } from "@apollo/client";
 
 function Homepage() {
-  const [current_page, setCurrent_page] = useState(0);
   const GET_TODO_LISTS = gql`
     query ExampleQuery {
       count {
         total
       }
+
       getTodo {
         title
         discription
