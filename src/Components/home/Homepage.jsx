@@ -9,7 +9,6 @@ function Homepage() {
       count {
         total
       }
-
       getTodo {
         title
         discription
